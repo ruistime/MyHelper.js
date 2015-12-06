@@ -50,7 +50,7 @@
 	}
 	//检测是否是函数
     _.isFunction = function(obj){
-    	return Object.prototype.toString.call(obj);
+    	return Object.prototype.toString.call(obj) ==='[object Function]';
     }
 	/*关于for in的一些认识:
 	1:精神性无序性：
@@ -115,24 +115,28 @@
     	return obj !=null&& hasOwnProperty.call(obj,key)
     }
     //获取一个对象的键，第二个参数决定是否需要原型属性。
-    _getKey = function(obj,own){
-    	if(!_isObj) return [];
-    	var keys=[];
-    	for(var key in obj){
-    		if(own&&_hasOwnProperty){
-    			keys.push(key)
-    		}else{
-    			keys.push(key)
-    		}
-    	return  keys; 
+    _getKey = function(own){
+    	return function(obj){
+	    	if(!_isObj) return [];
+	    	var keys=[];
+	    	for(var key in obj){
+	    		if(own){
+					if(!_hasOwnProperty(obj,key)) continue;
+	    			keys.push(key)
+	    		}
+	    		else{
+	    			keys.push(key)
+	    		}
+	    	return  keys; 
+	    	}
     	}
     }
     //extend
-    _extend = createAssigner(_getKey(obj,false))
-    //extendOwn
-    _extendOwn = createAssigner(_getKey(obj,true))
+    _extend = createAssigner(_getKey(false))
+    //extendOwz
+    _extendOwn = createAssigner(_getKey(true))
     //defaultExtend
-    _defaultExtend= createAssigner(_getKey(obj,true),true)
+    _defaultExtend= createAssigner(_getKey(false),true)
     //获取对象的属性或者调用函数获取对象的某项属性
     _result = function(obj,prop,fallback){
     	var value = obj == null? void 0:obj[prop];
@@ -143,10 +147,10 @@
     }
     //克隆一个对象，看做是extend的单例
     _.clone = function(obj){
-    	if(!_isObj) return obj;
-    	return _.isArray ? obj.slice():_.extend({},obj)
+    	if(typeof obj == 'object') return _.isArray ? obj.slice():_.extend({},obj);
+        return obj;
     }
-
+    
 
 
 
